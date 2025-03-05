@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
@@ -8,12 +8,19 @@ from Crypto.Random import get_random_bytes
 import base64
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='build', static_url_path='')
 CORS(app)
 
-# Инициализируем пустые ключи, они будут генерироваться по запросу
 rsa_private_key = None
 rsa_public_key = None
+used_session_keys = set()
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/api/generate-keys', methods=['GET'])
 def generate_keys():

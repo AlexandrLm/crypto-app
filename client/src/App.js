@@ -18,11 +18,12 @@ function App() {
   const [otherPublicKeys, setOtherPublicKeys] = useState({});
   const [selectedOtherKeyId, setSelectedOtherKeyId] = useState(null);
   const [importType, setImportType] = useState('own'); // 'own' для собственного ключа, 'other' для ключа другого пользователя
+  const API_URL = 'http://192.168.1.146:5000';
 
   useEffect(() => {
     const fetchKeys = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/generate-keys', {
+        const response = await axios.get(API_URL+'/api/generate-keys', {
           headers: { 'Content-Type': 'application/json' },
         });
         console.log('Keys response:', response.data);
@@ -60,7 +61,7 @@ function App() {
     setDigest(calculatedDigest);
     try {
       const hashResponse = await axios.post(
-        'http://localhost:5000/api/hash',
+        API_URL+'/api/hash',
         { digest: calculatedDigest },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -69,7 +70,7 @@ function App() {
       console.log(`Hash: ${computedHash}`);
 
       const signResponse = await axios.post(
-        'http://localhost:5000/api/sign',
+        API_URL+'/api/sign',
         { hash: computedHash },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -78,7 +79,7 @@ function App() {
       console.log(`Signature: ${computedSignature}`);
 
       const encryptResponse = await axios.post(
-        'http://localhost:5000/api/encrypt',
+        API_URL+'/api/encrypt',
         { text: text, digest: calculatedDigest },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -106,7 +107,7 @@ function App() {
     }
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/decrypt',
+        API_URL+'/api/decrypt',
         {
           encrypted_text: encryptedTextPart,
           encrypted_session_key: encryptedSessionKey,
