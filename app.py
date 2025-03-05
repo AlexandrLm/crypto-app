@@ -6,6 +6,7 @@ from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA256
 from Crypto.Random import get_random_bytes
 import base64
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -147,6 +148,8 @@ def decrypt():
     encrypted_session_key = data.get('encrypted_session_key')
     signature = data.get('signature')
     digest = data.get('digest')
+    other_public_key = data.get('other_public_key')
+
     if not encrypted_text or not rsa_private_key or not encrypted_session_key or not signature or not digest:
         return jsonify({"error": "Missing required parameters"}), 400
 
@@ -154,7 +157,7 @@ def decrypt():
     is_valid = False
 
     try:
-        # Попытка расшифровки сессионного ключа
+        # Расшифровка сессионного ключа с собственным приватным ключом
         cipher_rsa = PKCS1_OAEP.new(RSA.import_key(rsa_private_key))
         session_key = cipher_rsa.decrypt(base64.b64decode(encrypted_session_key))
 
@@ -168,20 +171,19 @@ def decrypt():
 
         # Извлечение длины и текста
         length = int.from_bytes(decrypted_message[:2], 'big')
-        print(f"Extracted length: {length}")
         decrypted_text = decrypted_message[2:2 + length].decode('utf-8')
-        print(f"Decrypted text: {decrypted_text}")
     except Exception as e:
         print(f"Decryption error: {str(e)}")
 
-    # Вычисление хеша для проверки
+    # Проверка подписи с использованием other_public_key, если предоставлен
     try:
         original_hash = compute_hash(digest)
-        # Проверка подписи только если расшифровка успешна
         if decrypted_text != "Decryption failed due to data corruption":
-            is_valid = verify_signature(original_hash, signature, rsa_public_key)
+            public_key_to_use = RSA.import_key(other_public_key) if other_public_key else RSA.import_key(rsa_public_key)
+            verifier = PKCS1_v1_5.new(public_key_to_use)
+            is_valid = verifier.verify(SHA256.new(original_hash.encode('utf-8')), base64.b64decode(signature))
         else:
-            is_valid = False  # Подпись недействительна при сбое расшифровки
+            is_valid = False
     except Exception as e:
         print(f"Verification error: {str(e)}")
         is_valid = False
@@ -192,4 +194,4 @@ def decrypt():
     })
 
 if __name__ == '__main__':
-    app.run(host='192.168.1.146', debug=True, port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
