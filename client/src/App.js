@@ -174,15 +174,15 @@ function App() {
         const keyContent = e.target.result;
         try {
           if (!keyContent.includes('-----BEGIN PUBLIC KEY-----') && !keyContent.includes('-----BEGIN PRIVATE KEY-----')) {
-            throw new Error('Неверный формат ключа');
+            throw new Error('Неверный формат ключа. Ожидается RSA в формате PEM.');
           }
-          if (importType === 'own') {
-            if (keyContent.includes('-----BEGIN PUBLIC KEY-----')) {
-              setPublicKey(keyContent);
-            } else if (keyContent.includes('-----BEGIN PRIVATE KEY-----')) {
-              setPrivateKey(keyContent);
-            }
-          } else if (importType === 'other') {
+          // Если публичный ключ еще не задан, считаем это собственным ключом
+          if (keyContent.includes('-----BEGIN PUBLIC KEY-----') && !publicKey) {
+            setPublicKey(keyContent);
+          } else if (keyContent.includes('-----BEGIN PRIVATE KEY-----') && !privateKey) {
+            setPrivateKey(keyContent);
+          } else {
+            // Если собственные ключи уже есть, добавляем как ключ другого пользователя
             const newId = Date.now().toString();
             setOtherPublicKeys({ ...otherPublicKeys, [newId]: keyContent });
           }
@@ -195,6 +195,7 @@ function App() {
       event.target.value = '';
     }
   };
+
   const exportResults = () => {
     const results = {
       digest,
@@ -261,34 +262,20 @@ function App() {
         <div style={{ borderBottom: '1px solid #ccc', paddingBottom: '10px', marginBottom: '10px' }}>
           <h4>Import Key</h4>
           <label>
-            Import Key Type:
-            <select
-              value={importType}
-              onChange={(e) => setImportType(e.target.value)}
-              style={{ marginLeft: '10px', padding: '4px' }}
-            >
-              <option value="own">Your Key</option>
-              <option value="other">Other User's Key</option>
-            </select>
+            <input type="file" onChange={handleImportKey} accept=".pem" style={{ marginRight: '10px' }}/>
+              Import Key
           </label>
-          <label style={{ marginLeft: '10px' }}>
-            <input type="file" onChange={handleImportKey} accept=".pem" style={{ marginLeft: '5px' }} />
-            Import Key
-          </label>
-        </div>
 
-        <div>
-          <h4>Other Users' Public Keys</h4>
           <select
-            value={selectedOtherKeyId || ''}
             className="custom-select"
+            value={selectedOtherKeyId || ''}
             onChange={(e) => setSelectedOtherKeyId(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+            style={{ width: 'auto', padding: '8px', margin: '10px'}}
           >
-            <option value="">Select a key</option>
+            <option value="">Your key</option>
             {Object.entries(otherPublicKeys).map(([id, key], index) => (
               <option key={id} value={id}>
-                Key {index + 1} (Preview: {key.substring(27, 40)}...)
+                Key {index + 1} ({key.substring(27, 40)}...)
               </option>
             ))}
           </select>
