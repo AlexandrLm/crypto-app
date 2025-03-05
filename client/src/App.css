@@ -1,0 +1,195 @@
+.App {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  padding: 30px;
+  max-width: 800px;
+  margin: 40px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.App:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+h1 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+h3 {
+  color: #34495e;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+input {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 60%;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+p {
+  margin: 15px 0;
+  word-break: break-all;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.error {
+  color: #e74c3c; /* Красный цвет для ошибок */
+  margin-top: 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background-color: #f8d7da; /* Светло-красный фон */
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb; /* Граница */
+  animation: fadeIn 0.5s ease; /* Анимация появления */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.keys-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+
+.keys-section p {
+  margin: 10px 0;
+  color: #333;
+}
+
+.keys-section button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.keys-section input[type="file"] {
+  display: none;
+}
+
+.keys-section label {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.keys-section label:hover {
+  background-color: #218838;
+}
+
+.encrypt-section, .decrypt-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+
+.result-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+
+.result-section strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Анимация для кнопок */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+button.animated {
+  animation: pulse 1.5s infinite;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .App {
+    padding: 20px;
+    margin: 20px auto;
+  }
+
+  input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+}
